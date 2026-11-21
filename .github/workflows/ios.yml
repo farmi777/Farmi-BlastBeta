@@ -15,9 +15,9 @@ jobs:
           npx cap init "Farmi Blast" com.farmiblast.game --web-dir www
           npx cap add ios
           npx cap sync ios
-          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -sdk iphoneos CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" CONFIGURATION_BUILD_DIR=build
+          xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Release -sdk iphoneos CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" CONFIGURATION_BUILD_DIR="$GITHUB_WORKSPACE/build"
           mkdir -p Payload
-          cp -r ios/App/build/App.app Payload/
+          cp -r "$GITHUB_WORKSPACE/build/App.app" Payload/
           zip -r Farmi-Blast.ipa Payload
       - uses: actions/upload-artifact@v4
         with:
