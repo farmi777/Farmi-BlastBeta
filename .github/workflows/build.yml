@@ -1,0 +1,29 @@
+name: Build Signed APK
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+      - run: |
+          npm init -y
+          npm install @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6
+          npx cap init "Farmi Blast" com.farmiblast.game --web-dir www
+          npx cap add android
+          npx cap sync
+          keytool -genkey -v -keystore android/app/release.keystore -alias farmi -keyalg RSA -keysize 2048 -validity 10000 -storepass 123456 -keypass 123456 -dname "CN=Farmi, O=FarmiGames, C=RU"
+          cd android
+          ./gradlew assembleRelease -Pandroid.injected.signing.store.file=release.keystore -Pandroid.injected.signing.store.password=123456 -Pandroid.injected.signing.key.alias=farmi -Pandroid.injected.signing.key.password=123456
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Farmi-Blast-Signed
+          path: |
+            android/app/build/outputs/apk/release/app-release.apk
+            android/app/release.keystore
