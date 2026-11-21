@@ -18,9 +18,10 @@ jobs:
           npx cap init "Farmi Blast" com.farmiblast.game --web-dir www
           npx cap add android
           npx cap sync
-          keytool -genkey -v -keystore android/app/release.keystore -alias farmi -keyalg RSA -keysize 2048 -validity 10000 -storepass 123456 -keypass 123456 -dname "CN=Farmi, O=FarmiGames, C=RU"
+          keytool -genkey -v -keystore "$GITHUB_WORKSPACE/android/app/release.keystore" -alias farmi -keyalg RSA -keysize 2048 -validity 10000 -storepass 123456 -keypass 123456 -dname "CN=Farmi, O=FarmiGames, C=RU"
           cd android
-          ./gradlew assembleRelease -Pandroid.injected.signing.store.file=release.keystore -Pandroid.injected.signing.store.password=123456 -Pandroid.injected.signing.key.alias=farmi -Pandroid.injected.signing.key.password=123456
+          chmod +x gradlew
+          ./gradlew assembleRelease -Pandroid.injected.signing.store.file="$GITHUB_WORKSPACE/android/app/release.keystore" -Pandroid.injected.signing.store.password=123456 -Pandroid.injected.signing.key.alias=farmi -Pandroid.injected.signing.key.password=123456
       - uses: actions/upload-artifact@v4
         with:
           name: Farmi-Blast-Signed
